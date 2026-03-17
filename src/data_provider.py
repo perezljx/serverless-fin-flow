@@ -1,6 +1,7 @@
 import os
 import requests
 import time
+from simulator import simulate_real_investment
 
 # Retrieve API Key from your environment
 API_KEY = os.getenv("API_KEY")
@@ -55,9 +56,26 @@ def get_historical_annual_return(symbol, api_key, years=10):
     # Extract the time series section
     time_series = history_data.get("Monthly Adjusted Time Series")
 
-    if not time_series:
-        print("Could not retrieve historical data.")
-        return None
+    # Ask user how much they invest monthly
+    monthly_investment = float(input("\nEnter monthly investment amount: "))
+
+    years = 10  # or keep your existing variable
+
+    # Run REAL investment simulation using existing time_series
+    results = simulate_real_investment(
+        time_series,
+        monthly_investment,
+        years
+    )
+
+    # Calculate growth
+    total_growth = results["final_value"] - results["total_invested"]
+
+    print("\n--- Real Investment Simulation ---")
+    print(f"Total Invested: ${round(results['total_invested'], 2)}")
+    print(f"Portfolio Value: ${round(results['final_value'], 2)}")
+    print(f"Total Growth: ${round(total_growth, 2)}")
+    print(f"Total Shares Owned: {round(results['total_shares'], 4)}")
 
     # Sort dates from oldest to newest
     dates = sorted(time_series.keys())
@@ -90,8 +108,8 @@ annual_return_percent, time_series, dates = get_historical_annual_return(symbol,
 if annual_return_percent is not None:
     print(f"{symbol} {years}-Year Historical Annual Return: {annual_return_percent}%")
 
-# Ask user how much they invest each month
-monthly_investment = float(input("\nEnter monthly investment amount: "))
+# Ask user how much they invest monthly
+monthly_investment = float(input("\nEnter monthly investment amount: $"))
 
 # Track total shares accumulated over time
 total_shares = 0

@@ -1,6 +1,6 @@
 import os
-from fetch_price import get_historical_annual_return
-from growth_engine import simulate_growth
+from data_provider import get_historical_annual_return
+from simulator import simulate_growth
 
 
 def run_simulation(symbol, monthly_investment, years, history_years=10):
